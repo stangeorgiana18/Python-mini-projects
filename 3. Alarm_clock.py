@@ -5,22 +5,26 @@ import time
 
 def get_user_input():
     	
-    time_setting = input("Choose minutes or seconds (m/s): ")
-    time_value = input(f"How many {time_setting}?: ")
+    while True:
+        try:
+            time_setting = input("Choose minutes or seconds (m/s): ")
+            
+            if time_setting.lower() not in ['m', 's']:
+                raise ValueError("Invalid time setting. Choose 'm' or 's'.")
 
-    return time_setting.lower(), time_value
+            time_value = input(f"How many {time_setting}?: ")
+            
+            if not time_value.isdigit():
+                raise ValueError("Invalid input. Enter a valid number.")
+            
+            seconds = 60 * int(time_value) if time_setting.lower() == 'm' else int(time_value)
+            
+            return time_setting.lower(), seconds
+        
+        except ValueError as e:
+            print(f"Error: {e}")
 
 
-def convert_to_seconds(time_setting, time_value):
-    	
-    if time_setting not in ['m', 's']:
-        raise ValueError("Invalid time setting. Choose 'm' or 's'.")
-    
-    try:
-        return 60 * int(time_value) if time_setting == 'm' else int(time_value)
-    
-    except ValueError as e:
-        raise ValueError("Invalid time or duration. Enter a valid number.") from e
 
 def wait_for_alarm(seconds):
     
@@ -32,8 +36,8 @@ def wait_for_alarm(seconds):
 
 def main():
     try:
-        time_setting, time_value = get_user_input()
-        seconds = convert_to_seconds(time_setting, time_value)
+        time_setting, seconds = get_user_input()
+       
 
         # wait for the alarm
         wait_for_alarm(seconds)
@@ -46,6 +50,6 @@ def main():
     except Exception as e:
         print(f"Error: {e}")
 
-
+# check if the script is run as the main program or imported
 if __name__ == "__main__":
     main()
